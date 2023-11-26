@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    {% if form %}
+    <form action="" method="post">
+        ...
+    </form>
+    {% endif %}
+    {% for post in posts %}
+    {% include '_post.html' %}
+    {% endfor %}
+    
+    
+    {% for surf in surf %}
+    
+    <p>Has Surfboards:
+    {{ surf.title.username }}  <b>{{ surf.title  }} {{ surf.length }} {{ surf.make }} {{ surf.model  }} {{ surf.description }}</b>
+    </p>
+    {% endfor %}
+   
+{% endblock %}

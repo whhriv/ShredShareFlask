@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Add Ski</h1>
+    {% if form %}
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+
+        <p>
+            {{ form.title.label }}<br>
+            {{ form.title }}<br>
+            {% for error in form.title.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.length.label }}<br>
+            {{ form.length }}<br>
+            {% for error in form.length.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.make.label }}<br>
+            {{ form.make }}<br>
+            {% for error in form.make.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.model.label }}<br>
+            {{ form.model }}<br>
+            {% for error in form.model.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.binding.label }}<br>
+            {{ form.binding }}<br>
+            {% for error in form.binding.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.description.label }}<br>
+            {{ form.description }}<br>
+            {% for error in form.description.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
+        <p>{{ form.submit() }}</p>
+    </form>
+ 
+    {% endif %}
+
+    {% for ski in Skis %}
+    <p>
+    {{ ski.title.user_id }}  <b>{{ ski.description }}</b>
+    </p>
+    {% endfor %}
+    
+ 
+
+{% endblock %}

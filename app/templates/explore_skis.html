@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
+    {% if form %}
+    <form action="" method="post">
+        ...
+    </form>
+    {% endif %}
+    {% for post in posts %}
+    {% include '_post.html' %}
+    {% endfor %}
+    
+    
+    {% for ski in skis %}
+    
+    <p>Has Skis:
+    {{ ski.title.username }}  <b>{{ ski.title  }} {{ ski.length }} {{ ski.make }} {{ ski.model  }} {{ ski.description }}</b>
+    </p>
+    {% endfor %}
+   
+{% endblock %}
