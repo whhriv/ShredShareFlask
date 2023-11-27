@@ -1,6 +1,8 @@
 # from app.api import api
 # from flask import jsonify
 # from app.models import User
+# from flask_cors import cross_origin
+
 
 # @api.route('/users/<int:id>', methods=['GET'])
 # def get_user(id):
@@ -24,6 +26,7 @@
 #     pass
 
 # @api.route('/users', methods=['POST'])
+# @cross_origin()
 # def create_user():
 #     pass
 
