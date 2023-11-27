@@ -64,45 +64,45 @@ def get_users():
 #     response.headers['Location'] = url_for('api.get_user', id=user.id)
 #     return response
 
-# Endpoing to create a new User
-# @api.route('/users', methods=['POST'])
-# @cross_origin()
-# def create_user():
-#     # Check to see that the request body is JSON
-#     if not request.is_json:
-#         return {'error': 'Your content-type must be application/json'}, 400
+#Endpoing to create a new User
+@api.route('/users', methods=['POST'])
+@cross_origin()
+def create_user():
+    # Check to see that the request body is JSON
+    if not request.is_json:
+        return {'error': 'Your content-type must be application/json'}, 400
     
-#     # Get the data from the request body
-#     data = request.json
+    # Get the data from the request body
+    data = request.json
 
-#     # Check to see if all of the required fiels are present
-#     required_fields = ['firstName', 'lastName', 'username', 'email', 'password']
-#     missing_fields = []
-#     for field in required_fields:
-#         if field not in data:
-#             missing_fields.append(field)
-#     if missing_fields:
-#         return {'error': f"{', '.join(missing_fields)} must be in the request body"}, 400
+    # Check to see if all of the required fiels are present
+    required_fields = ['firstName', 'lastName', 'username', 'email', 'password']
+    missing_fields = []
+    for field in required_fields:
+        if field not in data:
+            missing_fields.append(field)
+    if missing_fields:
+        return {'error': f"{', '.join(missing_fields)} must be in the request body"}, 400
     
-#     # Get the values from the data
-#     # first_name = data.get('firstName')
-#     # last_name = data.get('lastName')
-#     username = data.get('username')
-#     email = data.get('email')
-#     password = data.get('password')
+    # Get the values from the data
+    # first_name = data.get('firstName')
+    # last_name = data.get('lastName')
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
     
-#     # Check if there is already a user with username or email
-#     check_user = db.session.execute(db.select(User).where( (User.username==username) | (User.email==email) )).scalars().all()
-#     if check_user:
-#         return {'error': 'A user with that username and/or email already exists'}, 400
+    # Check if there is already a user with username or email
+    check_user = db.session.execute(db.select(User).where( (User.username==username) | (User.email==email) )).scalars().all()
+    if check_user:
+        return {'error': 'A user with that username and/or email already exists'}, 400
     
-#     # Create a new user
-#     new_user = User(username=username, email=email, password=password)
-#     # Add to the database
-#     db.session.add(new_user)
-#     db.session.commit()
-#     # return the dictionary/JSON version of the user
-#     return new_user.to_dict(), 201
+    # Create a new user
+    new_user = User(username=username, email=email, password=password)
+    # Add to the database
+    db.session.add(new_user)
+    db.session.commit()
+    # return the dictionary/JSON version of the user
+    return new_user.to_dict(), 201
 
 
 # # Endpoint to get user based on token
