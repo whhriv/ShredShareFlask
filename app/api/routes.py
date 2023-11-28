@@ -38,14 +38,13 @@ def get_skis():
 def create_ski():
     data = request.json
     new_ski = Skis(
-        id=data['id'],
         title=data['title'], 
         length=data['length'], 
         make=data['make'], 
         model=data['model'],
         binding=data['binding'], 
-        description=data['description'], 
-        image_url=data['image_url']
+        description=data['description'],
+        user_id=1
         )
     db.session.add(new_ski)
     db.session.commit()
