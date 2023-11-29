@@ -20,7 +20,7 @@ def get_token():
     return {'token': token}
 
 @api.route('/skis')
-@cross_origin()
+# @cross_origin()
 def get_skis():
     skis = db.session.execute(db.select(Skis)).scalars().all()
     return [ski.to_dict() for ski in skis]
@@ -44,6 +44,7 @@ def create_ski():
         model=data['model'],
         binding=data['binding'], 
         description=data['description'],
+        # image_url=data.get('imageUrl', None),
         user_id=1
         )
     db.session.add(new_ski)
@@ -65,6 +66,7 @@ def create_surf():
         make=data['make'], 
         model=data['model'],
         description=data['description'],
+        # image_url=data.get('imageUrl', None),
         user_id=1
         )
      # user_id=current_user.get_id()
@@ -72,18 +74,19 @@ def create_surf():
     db.session.commit()
     return new_surf.to_dict(), 201
 
-@api.route('/users', methods=['POST','GET'])
+@api.route('/users', methods=['POST','GET']) #token authentication for GET
 # @cross_origin()
 def get_users():
     users = db.session.execute(db.select(User)).scalars().all()
     return [user.to_dict() for user in users]
+
 @api.route('/register', methods=['POST', 'GET'])
 @cross_origin()
 def create_user():
 
 
     data = request.json
-    new_user = User(username=data['username'], location=data['location'], about_me=data['about_me'], email=data['email'], password=data['password'])
+    new_user = User(username=data['username'], location=data['location'],  email=data['email'], password_hash=data['password'])
     db.session.add(new_user)
     db.session.commit()
     return new_user.to_dict(), 201
