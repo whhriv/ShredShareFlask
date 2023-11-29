@@ -8,8 +8,12 @@ token_auth = HTTPTokenAuth()
 
 @basic_auth.verify_password
 def verify(username, password):
+    print(username, password)
+    # users = db.session.execute(db.select(User)).scalar()
+    # puser = [user.to_dict for user in users]
+   
     user = db.session.execute(db.select(User).where(User.username==username)).scalar()
-    if user is not None and user.check_password(password):
+    if user is not None and user.password_hash==password:
         return user
     return None
 

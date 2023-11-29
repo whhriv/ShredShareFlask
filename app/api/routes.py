@@ -16,14 +16,15 @@ CORS(app)
 CORS(api)
 
 
-# @api.route('/token')
-# @basic_auth.login_required
-# def get_token():
-#     auth_user = basic_auth.current_user()
-#     token = auth_user.get_token()
-#     return {'token': token}
+@api.route('/token')
+@basic_auth.login_required
+def get_token():
+    auth_user = basic_auth.current_user()
+    print('auth_user')
+    token = auth_user.get_token()
+    return {'token': token}
 
-@api.route('/users/me', methods=["GET"])
+@api.route('/users/me', methods=["GET", "POST"])
 @token_auth.login_required
 def get_me():
     current_user = token_auth.current_user()
@@ -39,7 +40,7 @@ def get_skis():
 
 @api.route('/createskis', methods=['POST'])
 @cross_origin()
-@token_auth.login_required
+# @token_auth.login_required
 def create_ski():
     data = request.json
     user_id = current_user.id if current_user.is_authenticated else None
@@ -52,45 +53,45 @@ def create_ski():
         binding=data['binding'], 
         description=data['description'],
         # image_url=data.get('imageUrl', None),
-        user_id=user_id
+        user_id=1 #current_user.id
         )
     db.session.add(new_ski)
     db.session.commit()
     return new_ski.to_dict(), 201
 
-# @api.route('/editskis/<ski_id>', methods=['PUT'])
-# @token_auth.login_required
-# def edit_ski(ski_id):
-#     if not request.is_json:
-#         return {'error': 'Your content-type must be application/json'}, 400
-#     ski = db.session.get(Skis, ski_id)
-#     if ski is None:
-#         return {'error': f"ski with an ID of {ski_id} does not exist"}, 404
-#     current_user = token_auth.current_user()
-#     if ski.author != current_user:
-#         return {'error': 'You do not have permission to edit this ski'}, 403
-#     data = request.json
-#     for field in data:
-#         if field in {'title', 'body', 'imageUrl'}:
-#             if field == 'imageUrl':
-#                 setattr(ski, 'image_url', data[field])
-#             else:
-#                 setattr(ski, field, data[field])
-#     db.session.commit()
-#     return ski.to_dict()
+@api.route('/editskis/<ski_id>', methods=['PUT'])
+@token_auth.login_required
+def edit_ski(ski_id):
+    if not request.is_json:
+        return {'error': 'Your content-type must be application/json'}, 400
+    ski = db.session.get(Skis, ski_id)
+    if ski is None:
+        return {'error': f"ski with an ID of {ski_id} does not exist"}, 404
+    current_user = token_auth.current_user()
+    if ski.author != current_user:
+        return {'error': 'You do not have permission to edit this ski'}, 403
+    data = request.json
+    for field in data:
+        if field in {'title', 'body', 'imageUrl'}:
+            if field == 'imageUrl':
+                setattr(ski, 'image_url', data[field])
+            else:
+                setattr(ski, field, data[field])
+    db.session.commit()
+    return ski.to_dict()
 
-# @api.route('/deleteskis/<ski_id>', methods=["DELETE"])
-# @token_auth.login_required
-# def delete_ski(ski_id):
-#     ski = db.session.get(Skis, ski_id)
-#     if ski is None:
-#         return {'error': f'ski with an ID of {ski_id} does not exist'}, 404
-#     current_user = token_auth.current_user()
-#     if ski.author != current_user:
-#         return {'error': 'You do not have permission to delete this ski'}, 403
-#     db.session.delete(ski)
-#     db.session.commit()
-#     return {'success': f"{ski.title} has been deleted"}
+@api.route('/deleteskis/<ski_id>', methods=["DELETE"])
+@token_auth.login_required
+def delete_ski(ski_id):
+    ski = db.session.get(Skis, ski_id)
+    if ski is None:
+        return {'error': f'ski with an ID of {ski_id} does not exist'}, 404
+    current_user = token_auth.current_user()
+    if ski.author != current_user:
+        return {'error': 'You do not have permission to delete this ski'}, 403
+    db.session.delete(ski)
+    db.session.commit()
+    return {'success': f"{ski.title} has been deleted"}
 
 @api.route('/surf')
 def get_surf():
@@ -153,30 +154,30 @@ def edit_surf(surf_id):
     # form.image_url.data = surf.image_url
     return form
 
-@api.route('/surf/<surf_id>', methods=['PUT'])
-@token_auth.login_required
-def edit_ski(surf_id):
-    if not request.is_json:
-        return {'error': 'Your content-type must be application/json'}, 400
-    surf = db.session.get(Surf, surf_id)
-    if surf is None:
-        return {'error': f"surf with an ID of {surf_id} does not exist"}, 404
-    current_user = token_auth.current_user()
-    if surf.author != current_user:
-        return {'error': 'You do not have permission to edit this surf'}, 403
-    data = request.json
-    for field in data:
-        if field in {'title', 'body', 'imageUrl'}:
-            if field == 'imageUrl':
-                setattr(surf, 'image_url', data[field])
-            else:
-                setattr(surf, field, data[field])
-    db.session.commit()
-    return surf.to_dict()
+# @api.route('/surf/<surf_id>', methods=['PUT'])
+# @token_auth.login_required
+# def edit_surf(surf_id):
+#     if not request.is_json:
+#         return {'error': 'Your content-type must be application/json'}, 400
+#     surf = db.session.get(Surf, surf_id)
+#     if surf is None:
+#         return {'error': f"surf with an ID of {surf_id} does not exist"}, 404
+#     current_user = token_auth.current_user()
+#     if surf.author != current_user:
+#         return {'error': 'You do not have permission to edit this surf'}, 403
+#     data = request.json
+#     for field in data:
+#         if field in {'title', 'body', 'imageUrl'}:
+#             if field == 'imageUrl':
+#                 setattr(surf, 'image_url', data[field])
+#             else:
+#                 setattr(surf, field, data[field])
+#     db.session.commit()
+#     return surf.to_dict()
 
 @api.route('/surf/<surf_id>', methods=["DELETE"])
 @token_auth.login_required
-def delete_ski(surf_id):
+def delete_surf(surf_id):
     surf = db.session.get(Surf, surf_id)
     if surf is None:
         return {'error': f'surf with an ID of {surf_id} does not exist'}, 404
@@ -193,6 +194,8 @@ def get_users():
     users = db.session.execute(db.select(User)).scalars().all()
     return [user.to_dict() for user in users]
 
+
+
 @api.route('/login', methods=['POST', 'GET']) #removed 'GET' #token authentication for GET
 @cross_origin()
 def login_user():
@@ -200,15 +203,15 @@ def login_user():
     if current_user.is_authenticated:
         return redirect(url_for('index'))
 
-    form = LoginForm()
+    # form = LoginForm()
     
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user, remember=form.remember_me.data)
-            return redirect(url_for('index'))
-        else:
-            print('Invalid username or password', 'error')
+    # if form.validate_on_submit():
+        # user = User.query.filter_by(username=form.username.data).first()
+    #     if user and user.check_password(form.password.data):
+    #         login_user(user, remember=form.remember_me.data)
+    #         return redirect(url_for('index'))
+    #     else:
+    #         print('Invalid username or password', 'error')
        
 
     return jsonify({'message': 'Login successful'}), 200

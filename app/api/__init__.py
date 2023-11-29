@@ -25,4 +25,4 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 
-from app.api import users, errors, tokens, routes
+from app.api import users, errors,  routes
