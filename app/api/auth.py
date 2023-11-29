@@ -28,3 +28,4 @@ def verify(token):
 @token_auth.error_handler
 def handle_error(status):
     return {'error': 'Invalid Token'}, status
+

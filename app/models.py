@@ -3,6 +3,9 @@ from app import db, login
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import LoginManager, UserMixin
 from flask import url_for
+import os
+import base64
+
 
 
 @login.user_loader
@@ -42,6 +45,8 @@ class User(db.Model, UserMixin, PaginatedAPIMixin):
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
     posts = db.relationship('Post', backref='author', lazy='dynamic')
+    token = db.Column(db.String(32), index=True, unique=True)
+    token_expiration = db.Column(db.DateTime)
     followed = db.relationship(
     'User', secondary=followers,
     primaryjoin=(followers.c.follower_id == id),
@@ -76,6 +81,15 @@ class User(db.Model, UserMixin, PaginatedAPIMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def get_token(self):
+        now = datetime.utcnow()
+        if self.token and self.token_expiration > now + timedelta(minutes=1):
+            return self.token
+        self.token = base64.b64encode(os.urandom(24)).decode('utf-8')
+        self.token_expiration = now + timedelta(hours=1)
+        db.session.commit()
+        return self.token
     
     def follow(self, user):
         if not self.is_following(user):
