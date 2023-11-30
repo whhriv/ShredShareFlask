@@ -7,6 +7,7 @@ from app.api.errors import bad_request
 from .auth import basic_auth, token_auth
 from flask_login import current_user, login_user, logout_user, login_required
 from ..forms import LoginForm, EditProfileForm, PostForm, SkiForm, SurfForm, UserForm
+# from flask.ext.cors import CORS, cross_origin
 
 
 app = Flask(__name__)
@@ -24,6 +25,7 @@ def get_token():
 
 @api.route('/users/me', methods=["GET", "POST"])
 @token_auth.login_required
+@cross_origin(origin='*',headers=['Content-Type','Authorization'])
 def get_me():
     current_user = token_auth.current_user()
     return current_user.to_dict()
@@ -61,10 +63,11 @@ def get_skis():
 @token_auth.login_required
 def create_ski():
     data = request.json
+    breakpoint()
     # userID = db.session.get(User, id)
     # print(userID)
     
-    
+
     # user_id = data.get('user_id')
     # user = User.query.get(user_id)
 
@@ -130,7 +133,7 @@ def get_surf():
 
 @api.route('/createsurf', methods=['POST'])
 @cross_origin()
-# @token_auth.login_required
+@token_auth.login_required
 def create_surf():
     data = request.json
     new_surf= Surf(
@@ -139,8 +142,8 @@ def create_surf():
         make=data['make'], 
         model=data['model'],
         description=data['description'],
-        image_url=data['imageUrl'],
-        user_id=1 #current_user.id
+        image_url=data['image_url'],
+        user_id=data['user_id'] #current_user.id
         )
     #  user_id= current_user.get_id()
     db.session.add(new_surf)
