@@ -64,12 +64,13 @@ def create_ski():
     # userID = db.session.get(User, id)
     # print(userID)
     
+    
     # user_id = data.get('user_id')
     # user = User.query.get(user_id)
 
     # if user:
-    user_id = current_user.id if current_user.is_authenticated else None
-    
+    # user_id = current_user.id if current_user.is_authenticated else None
+    # usr_id = db.session.get(Skis, id)
     new_ski = Skis(
         title=data['title'], 
         length=data['length'], 
@@ -78,7 +79,7 @@ def create_ski():
         binding=data['binding'], 
         description=data['description'],
         image_url=data['image_url'],
-        user_id=4  #data['user_id']
+        user_id=data['user_id'],
         )
     
     db.session.add(new_ski)
@@ -138,7 +139,7 @@ def create_surf():
         make=data['make'], 
         model=data['model'],
         description=data['description'],
-        # image_url=data.get('imageUrl', None),
+        image_url=data['imageUrl'],
         user_id=1 #current_user.id
         )
     #  user_id= current_user.get_id()
@@ -204,15 +205,15 @@ def edit_surf(surf_id):
 #     db.session.commit()
 #     return surf.to_dict()
 
-@api.route('/surf/<surf_id>', methods=["DELETE"])
+@api.route('/deletesurf/<surf_id>', methods=["DELETE"])
 @token_auth.login_required
 def delete_surf(surf_id):
     surf = db.session.get(Surf, surf_id)
     if surf is None:
         return {'error': f'surf with an ID of {surf_id} does not exist'}, 404
     current_user = token_auth.current_user()
-    if surf.author != current_user:
-        return {'error': 'You do not have permission to delete this surf'}, 403
+    # if surf.author != current_user:
+    #     return {'error': 'You do not have permission to delete this surf'}, 403
     db.session.delete(surf)
     db.session.commit()
     return {'success': f"{surf.title} has been deleted"}

@@ -69,8 +69,8 @@ def users():
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
     posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
+        # {'author': user, 'body': 'Test post #1'},
+        # {'author': user, 'body': 'Test post #2'}
     ]
     return render_template('user.html', user=user, posts=posts)
 
@@ -139,7 +139,7 @@ def surf():
         model=form.model.data,
         description = form.description.data,
         user_id=current_user.id
-        # image_url = form.image_url.data or None
+        # image_url = form.imageUrl.data 
         )
         db.session.add(surf)
         db.session.commit()
