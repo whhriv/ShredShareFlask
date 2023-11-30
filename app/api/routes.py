@@ -1,12 +1,10 @@
 from . import api
 from app import db
 from app.models import  Skis, Surf, User
-from flask import Flask, request, url_for, redirect
+from flask import Flask, request, url_for, redirect, jsonify
 from flask_cors import cross_origin, CORS
-from flask import Flask, jsonify
 from app.api.errors import bad_request
 from .auth import basic_auth, token_auth
-from app.forms import RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
 from ..forms import LoginForm, EditProfileForm, PostForm, SkiForm, SurfForm, UserForm
 
@@ -30,6 +28,26 @@ def get_me():
     current_user = token_auth.current_user()
     return current_user.to_dict()
 
+@api.route('/login', methods=['POST', 'GET']) #removed 'GET' #token authentication for GET
+@cross_origin()
+def login_user():
+
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+
+    # form = LoginForm()
+    
+    # if form.validate_on_submit():
+        # user = User.query.filter_by(username=form.username.data).first()
+    #     if user and user.check_password(form.password.data):
+    #         login_user(user, remember=form.remember_me.data)
+    #         return redirect(url_for('index'))
+    #     else:
+    #         print('Invalid username or password', 'error')
+       
+
+    return jsonify({'message': 'Login successful'}), 200
+
 
 @api.route('/skis')
 # @cross_origin()
@@ -40,11 +58,18 @@ def get_skis():
 
 @api.route('/createskis', methods=['POST'])
 @cross_origin()
-# @token_auth.login_required
+@token_auth.login_required
 def create_ski():
     data = request.json
+    # userID = db.session.get(User, id)
+    # print(userID)
+    
+    # user_id = data.get('user_id')
+    # user = User.query.get(user_id)
+
+    # if user:
     user_id = current_user.id if current_user.is_authenticated else None
-    print('user_id',user_id)
+    
     new_ski = Skis(
         title=data['title'], 
         length=data['length'], 
@@ -52,14 +77,18 @@ def create_ski():
         model=data['model'],
         binding=data['binding'], 
         description=data['description'],
-        # image_url=data.get('imageUrl', None),
-        user_id=1 #current_user.id
+        image_url=data['image_url'],
+        user_id=4  #data['user_id']
         )
+    
     db.session.add(new_ski)
     db.session.commit()
     return new_ski.to_dict(), 201
+    # else:
+    #     return {"error, User not found for provided user_id"},404
+    # return {"error from response from view function"}, 500
 
-@api.route('/editskis/<ski_id>', methods=['PUT'])
+@api.route('/editski/<ski_id>', methods=['PUT'])
 @token_auth.login_required
 def edit_ski(ski_id):
     if not request.is_json:
@@ -87,8 +116,8 @@ def delete_ski(ski_id):
     if ski is None:
         return {'error': f'ski with an ID of {ski_id} does not exist'}, 404
     current_user = token_auth.current_user()
-    if ski.author != current_user:
-        return {'error': 'You do not have permission to delete this ski'}, 403
+    # if ski.author != current_user:
+    #     return {'error': 'You do not have permission to delete this ski'}, 403
     db.session.delete(ski)
     db.session.commit()
     return {'success': f"{ski.title} has been deleted"}
@@ -112,7 +141,7 @@ def create_surf():
         # image_url=data.get('imageUrl', None),
         user_id=1 #current_user.id
         )
-     # user_id=current_user.get_id()
+    #  user_id= current_user.get_id()
     db.session.add(new_surf)
     db.session.commit()
     return new_surf.to_dict(), 201
@@ -196,25 +225,7 @@ def get_users():
 
 
 
-@api.route('/login', methods=['POST', 'GET']) #removed 'GET' #token authentication for GET
-@cross_origin()
-def login_user():
 
-    if current_user.is_authenticated:
-        return redirect(url_for('index'))
-
-    # form = LoginForm()
-    
-    # if form.validate_on_submit():
-        # user = User.query.filter_by(username=form.username.data).first()
-    #     if user and user.check_password(form.password.data):
-    #         login_user(user, remember=form.remember_me.data)
-    #         return redirect(url_for('index'))
-    #     else:
-    #         print('Invalid username or password', 'error')
-       
-
-    return jsonify({'message': 'Login successful'}), 200
 
 
     

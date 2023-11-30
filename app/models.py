@@ -136,7 +136,7 @@ class Skis(db.Model):
     description = db.Column(db.String, nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    image_url = db.Column(db.String, nullable=True )
+    image_url = db.Column(db.String, nullable=False )
 
     def __repr__(self):
         return f"<Post {self.id}|{self.title}>"
@@ -152,7 +152,7 @@ class Skis(db.Model):
             'description': self.description,
             'dateCreated': self.date_created,
             'userId': self.user_id,
-            # 'imageUrl': self.image_url,
+            'imageUrl': self.image_url,
             
         }
 
@@ -181,7 +181,7 @@ class Surf(db.Model):
             'length': self.length,
             'dateCreated': self.date_created,
             'userId': self.user_id,
-            # 'imageUrl': self.image_url,
+            'imageUrl': self.image_url,
             # 'author': self.author.to_dict()
         }
     
