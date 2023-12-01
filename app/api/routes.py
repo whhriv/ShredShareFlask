@@ -63,17 +63,7 @@ def get_skis():
 @token_auth.login_required
 def create_ski():
     data = request.json
-    breakpoint()
-    # userID = db.session.get(User, id)
-    # print(userID)
-    
 
-    # user_id = data.get('user_id')
-    # user = User.query.get(user_id)
-
-    # if user:
-    # user_id = current_user.id if current_user.is_authenticated else None
-    # usr_id = db.session.get(Skis, id)
     new_ski = Skis(
         title=data['title'], 
         length=data['length'], 
@@ -150,7 +140,7 @@ def create_surf():
     db.session.commit()
     return new_surf.to_dict(), 201
 
-@api.route('/surf/edit/<surf_id>', methods=["GET", "POST"])
+@api.route('/surf/edit/<surf_id>', methods=["PUT"])
 @login_required
 def edit_surf(surf_id):
     surf = db.session.get(Surf, surf_id)
@@ -173,7 +163,7 @@ def edit_surf(surf_id):
         surf.model=form.model.data,
         surf.description=form.description.data,
         surf.user_id=current_user.id
-        # surf.image_url = form.image_url.data
+        surf.image_url = form.image_url.data
         # Commit to the database
         db.session.commit()
         print(f'{surf.title} has been edited.', 'success')
